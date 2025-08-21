@@ -10,20 +10,26 @@ router.post('/signup', async (req, res) =>{
 
         // Create a new Person document using the Mongoose model
         const newUser = new User(data);
+if(newUser.role=== 'admin'){
+    const adminExists = await User.findOne({ role: 'admin' });
+    if (adminExists) {
+        return res.status(400).json({error: 'An admin already exists.'});
+    }
+} 
+const savedUser = await newUser.save();
+    console.log('User saved');
 
-        // Save the new person to the database
-        const response = await  newUser.save();
-        console.log('data saved');
+    // Generate JWT token
+    const payload = { id: savedUser.id };
+    const token = generateToken(payload);
 
-        const payload = {
-            id: response.id,
-           
-        }
-        console.log(JSON.stringify(payload));
-        const token = generateToken(payload);
+    //  Store token in DB
+    savedUser.token = token;
+    await savedUser.save();
+       
         console.log("Token is : ", token);
 
-        res.status(200).json({response: response, token: token});
+        res.status(200).json({response: savedUser, token: token});
     }
     catch(err){
         console.log(err);

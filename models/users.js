@@ -37,6 +37,10 @@ role:{
     type: String,
     enum: ['voter', 'admin'],
     default: 'voter'
+},
+token: {
+    type: String,
+    default: null
 }
 });
  userSchema.pre('save', async function(next){

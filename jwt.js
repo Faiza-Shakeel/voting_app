@@ -12,7 +12,7 @@ if (!token){
 // verifying jwt token
 try {
     const decoded= jwt.verify(token,process.env.JWT_SECRET)
-    req.user=decoded
+    req.user=decoded.userdata // attaching user data to the request object
     next()
 }
 catch(err){
